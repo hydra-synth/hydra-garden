@@ -1,0 +1,50 @@
+Arguments: 
+  /usr/local/bin/node /usr/local/bin/yarn --cwd frontend build
+
+PATH: 
+  /usr/local/lib/node_modules/npm/node_modules/npm-lifecycle/node-gyp-bin:/Users/ojack/PROJECTS/HYDRA-DEV/HYDRA-GARDEN/hydra-garden-of-links/node_modules/.bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin:/Users/ojack/.cargo/bin
+
+Yarn version: 
+  1.22.10
+
+Node version: 
+  12.18.3
+
+Platform: 
+  darwin x64
+
+Trace: 
+  SyntaxError: /Users/ojack/PROJECTS/HYDRA-DEV/HYDRA-GARDEN/hydra-garden-of-links/frontend/package.json: Unexpected token } in JSON at position 305
+      at JSON.parse (<anonymous>)
+      at /usr/local/lib/node_modules/yarn/lib/cli.js:1625:59
+      at Generator.next (<anonymous>)
+      at step (/usr/local/lib/node_modules/yarn/lib/cli.js:310:30)
+      at /usr/local/lib/node_modules/yarn/lib/cli.js:321:13
+
+npm manifest: 
+  {
+    "name": "garden-frontend",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+      "build": "parcel build src/index.html",
+      "start": "parcel watch src/index.html",
+      "test": "standard && npm run test-deps"
+    },
+    "dependencies": {
+      "choo": "^7.1.0",
+      "choo-service-worker": "^3.0.0",
+    },
+    "devDependencies": {
+      "choo-devtools": "^3.0.4",
+      "choo-scaffold": "^1.2.0",
+      "parcel": "^2.0.1",
+      "standard": "^16.0.4"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

@@ -1,0 +1,14 @@
+{
+  "name": "garden-frontend",
+  "short_name": "garden-frontend",
+  "description": "links related to hydra video synth",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000",
+  "theme_color": "#000",
+  "icons": [{
+    "src": "/assets/icon.png",
+    "type": "image/png",
+    "sizes": "512x512"
+  }]
+}

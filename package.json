@@ -1,0 +1,20 @@
+{
+  "name": "garden-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build-old": "parcel build src/index.html",
+    "build": "browserify src/index.js -o dist/bundle.js",
+    "publish": "git subtree push --prefix dist pages gh-pages",
+    "dev": "budo src/index.js:bundle.js --open --live --dir dist"
+  },
+  "dependencies": {
+    "choo": "^7.1.0",
+    "choo-service-worker": "^3.0.0"
+  },
+  "devDependencies": {
+    "choo-devtools": "^3.0.4",
+    "parcel": "^2.0.1",
+    "standard": "^16.0.4"
+  }
+}
