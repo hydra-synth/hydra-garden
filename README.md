@@ -4,5 +4,5 @@ links related to hydra video synth
 ## Commands
 Command                | Description                                      |
 -----------------------|--------------------------------------------------|
-`$ npm start`          | Start the development server
+`$ npm run dev`        | Start the development server. Requires `npm i -g budo`
 `$ npm run build`      | Compile all files into `dist/`

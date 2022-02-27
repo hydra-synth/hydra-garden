@@ -9,6 +9,7 @@
     "dev": "budo src/index.js:bundle.js --open --live --dir dist"
   },
   "dependencies": {
+    "airtable": "^0.11.2",
     "choo": "^7.1.0",
     "choo-service-worker": "^3.0.0"
   },
