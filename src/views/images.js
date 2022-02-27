@@ -12,17 +12,19 @@ ${link.Image ? link.Image.map((image) => html`<img src="${image.thumbnails.large
 
 const rand = (min=0, max=1) => min + Math.random() * (max - min)
 
-const floatingImage = ({link, width, id, top, left}, onClick) => link.Image ? html`<div 
+const floatingImage = ({link, width, id, top, left, transition = 'none'}, {onclick, onmousedown, onmouseup} = {}) => link.Image ? html`<div 
   class="bg-light-gray ba" 
-  onclick="${onClick}"
+  onclick="${onclick}"
+  onmousedown="${onmousedown}"
   id="${id}"
   style="
     position: absolute; 
     top:${top}px; 
     left:${left}px; 
     box-shadow: 2px 2px 20px black;
-    transition: all 1s;
+    transition: ${transition};
     width:${width}px;
+    cursor:move;
   ">
   <img style="" src="${link.Image[0].thumbnails.large.url}"/>
   <div class="f7">${link.Title}</div>
@@ -37,12 +39,14 @@ function view (state, emit) {
       <main class="pa0 cf center">
         ${tagSelector(state, emit)}
       
-        ${state.currentResults.map((l, i) => floatingImage(l, () => {emit('image:click', i)}))}
+        ${state.currentResults.map((l, i) => floatingImage(l, {
+          onclick: (e) => {emit('image:click', i, e)},
+          onmousedown: (e) => {emit('image:mousedown', i, e)},
+          onmouseup: (e) => {emit('image:mouseup', i, e)},
+        }))}
       </main>
     </body>
   `
-
-
 }
 
 function parseMarkdown(markdownText) {

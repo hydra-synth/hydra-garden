@@ -5,10 +5,11 @@
   "scripts": {
     "build-old": "parcel build src/index.html",
     "build": "browserify src/index.js -o dist/bundle.js",
-    "publish": "git subtree push --prefix dist pages gh-pages",
+    "publish": "git subtree push --prefix dist origin gh-pages",
     "dev": "budo src/index.js:bundle.js --open --live --dir dist"
   },
   "dependencies": {
+    "airtable": "^0.11.2",
     "choo": "^7.1.0",
     "choo-service-worker": "^3.0.0"
   },

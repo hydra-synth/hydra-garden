@@ -10,6 +10,8 @@ function store(state, emitter) {
 
   state.currentResults = [] 
 
+  state.drag = { x: 0, y: 0 }
+
   window.addEventListener('resize', () => {
     updateResults()
     emitter.emit('render')
@@ -19,28 +21,86 @@ function store(state, emitter) {
     console.log(`Navigated to ${state.route}`)
   })
 
-  emitter.on('image:click', (i) => {
+  emitter.on('image:mousedown', (i, e) => {
+    e.preventDefault()
+    const el = state.currentResults[i]
+    el.transition = 'none'
+    bringToFront(i)
+    state.drag.x = e.clientX
+    state.drag.y = e.clientY
+    state.drag.el = el
+    document.onmousemove = dragElement
+    document.onmouseup = stopDrag
+  })
+
+  function stopDrag () {
+    state.drag.el.transition = 'all 1s'
+    document.onmousemove = null
+    document.onmouseup = null
+  }
+
+  function dragElement(e) {
+    e.preventDefault()
+    const el = state.drag.el
+    const x = state.drag.x - e.clientX
+    const y = state.drag.y - e.clientY
+    state.drag.x = e.clientX
+    state.drag.y = e.clientY
+    el.top = el.top - y
+    el.left = el.left - x
+    emitter.emit('render')
+  }
+
+  function bringToFront(i) {
     const el = state.currentResults[i]
     state.currentResults.splice(i, 1)
     //console.log(newResults, )
     state.currentResults.push(el)
-   // state.currentResults = newResults
     emitter.emit('render')
+  }
+
+  emitter.on('image:click', (i) => {
+    bringToFront(i)
+   // state.currentResults = newResults
+    //emitter.emit('render')
     console.log('clicked on image', state.currentResults, i)
   })
 
   emitter.on('toggle tag', (tagIndex) => {
     state.tags[tagIndex].selected = ! state.tags[tagIndex].selected
+    filterResultsByTags()
     emitter.emit('render')
   })
 
+  function filterResultsByTags () {
+    const tags = state.tags.filter((tag) => tag.selected).map((tag) => tag.label)
+    state.currentResults = state.links.filter((link) => {
+      let containsTag = false
+      link.Tags.forEach((t) => {
+        if(tags.indexOf(t) > -1) containsTag = true
+      })
+      return containsTag
+    }).map((link, i) => ({
+      link: link,
+      width: rand(100, 350),
+      top: Math.random() * window.innerHeight,
+      left: Math.random() * (window.innerWidth - 300),
+      transition: 'all 1s',
+      id: `link-${i}`
+    }))
+    updateResults()
+    emitter.emit('render')
+    console.log('tags are', tags)
+  }
+
+  // update tags currently shown
   function updateTags () {
     const allTags =  state.links.reduce((prev, next) => prev.concat(next.Tags), [])
     const filteredTags = allTags.filter((item, index) => allTags.indexOf(item) === index)
     state.tags = filteredTags
     .map((tag, i) => ({
       label: tag, 
-      selected: true, 
+      selected: false, 
       color: `hsl(${360*i/filteredTags.length}, 100%, 70%)`
     }))
     updateResults()
@@ -50,9 +110,10 @@ function store(state, emitter) {
 
   function updateResults() {
     state.currentResults.forEach((link, i) => {
-      link.width = rand(100, 350)
+      link.width = rand(200, 350)
       link.top=  Math.random() * window.innerHeight
-      link.left = Math.random() * (window.innerWidth - 300)
+      link.left = Math.random() * (window.innerWidth - 300),
+      link.transition = 'all 1s'
     })
   }
 

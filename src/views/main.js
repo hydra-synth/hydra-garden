@@ -4,7 +4,7 @@ var TITLE = 'garden-frontend - main'
 
 module.exports = view
 
-const tagEl = (tags) => tags? html`<span>${tags.map((tag) => html`<span class="bg-light-gray ma1">${tag}</span>`)}` : ''
+ const tagEl = (tags) => tags? html`<span>${tags.map((tag) => html`<span class="bg-light-gray ma1">${tag}</span>`)}` : ''
 const dateEl = (d) => d && d.length > 0 ? `(${d.slice(0, 4)})` : ''
 const entry = (link) => html`<div class="mv2"><a href="${link.Link}" target="_blank">${link.Title} </a>  <span class="f7">${dateEl(link['Date Created'])} ${link["Short Description"]} ${tagEl(link["Tags"])} </span></div>`
 
