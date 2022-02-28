@@ -5,7 +5,8 @@
   "scripts": {
     "build-old": "parcel build src/index.html",
     "build": "browserify src/index.js -o dist/bundle.js",
-    "publish": "git subtree push --prefix dist origin gh-pages",
+    "publish-old": "git subtree push --prefix dist origin gh-pages",
+    "publish": "git push origin `git subtree split --prefix dist master`:gh-pages --force",
     "dev": "budo src/index.js:bundle.js --open --live --dir dist"
   },
   "dependencies": {
