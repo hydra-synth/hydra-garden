@@ -501,7 +501,7 @@ else {
 }
 module.exports = AbortController;
 
-},{"abort-controller":156,"abortcontroller-polyfill/dist/cjs-ponyfill":1}],3:[function(require,module,exports){
+},{"abort-controller":154,"abortcontroller-polyfill/dist/cjs-ponyfill":1}],3:[function(require,module,exports){
 (function (process){
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
@@ -577,7 +577,7 @@ var Airtable = /** @class */ (function () {
 module.exports = Airtable;
 
 }).call(this,require('_process'))
-},{"./airtable_error":4,"./base":5,"./record":17,"./table":19,"_process":162}],4:[function(require,module,exports){
+},{"./airtable_error":4,"./base":5,"./record":17,"./table":19,"_process":160}],4:[function(require,module,exports){
 "use strict";
 var AirtableError = /** @class */ (function () {
     function AirtableError(error, message, statusCode) {
@@ -889,7 +889,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 var node_fetch_1 = __importDefault(require("node-fetch"));
 module.exports = typeof window === 'undefined' ? node_fetch_1.default : window.fetch.bind(window);
 
-},{"node-fetch":156}],10:[function(require,module,exports){
+},{"node-fetch":154}],10:[function(require,module,exports){
 "use strict";
 /* eslint-enable @typescript-eslint/no-explicit-any */
 function has(object, property) {
@@ -1008,7 +1008,7 @@ module.exports = objectToQueryParamString;
 module.exports = process.env.npm_package_version;
 
 }).call(this,require('_process'))
-},{"_process":162}],15:[function(require,module,exports){
+},{"_process":160}],15:[function(require,module,exports){
 "use strict";
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
@@ -1666,7 +1666,7 @@ function expose (opts) {
   }
 }
 
-},{"./lib/copy":22,"./lib/debug":23,"./lib/help":24,"./lib/log":25,"./lib/logger":26,"./lib/perf":27,"./lib/storage":28,"events":158,"wayfarer/get-all-routes":142}],22:[function(require,module,exports){
+},{"./lib/copy":22,"./lib/debug":23,"./lib/help":24,"./lib/log":25,"./lib/logger":26,"./lib/perf":27,"./lib/storage":28,"events":156,"wayfarer/get-all-routes":142}],22:[function(require,module,exports){
 var stateCopy = require('state-copy')
 var pluck = require('plucker')
 
@@ -1724,7 +1724,7 @@ function debug (state, emitter, app, localEmitter) {
   })
 }
 
-},{"assert":151,"nanologger":125,"object-change-callsite":135}],24:[function(require,module,exports){
+},{"assert":149,"nanologger":125,"object-change-callsite":135}],24:[function(require,module,exports){
 module.exports = help
 
 function help () {
@@ -2264,7 +2264,7 @@ ChooHooks.prototype._emitLoaded = function () {
   })
 }
 
-},{"assert":151,"nanoscheduler":133,"on-performance":136}],31:[function(require,module,exports){
+},{"assert":149,"nanoscheduler":133,"on-performance":136}],31:[function(require,module,exports){
 (function (__dirname){
 /* global MessageChannel Notification */
 var assert = require('assert')
@@ -2396,7 +2396,7 @@ function serviceWorker (name, opts) {
 }
 
 }).call(this,"/node_modules/choo-service-worker")
-},{"assert":151,"path":161,"url":167}],32:[function(require,module,exports){
+},{"assert":149,"path":159,"url":165}],32:[function(require,module,exports){
 var assert = require('assert')
 var LRU = require('nanolru')
 
@@ -3040,7 +3040,7 @@ if (typeof module === 'object' && module.exports) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":157}],37:[function(require,module,exports){
+},{"buffer":155}],37:[function(require,module,exports){
 'use strict'
 
 module.exports = ready
@@ -6366,7 +6366,7 @@ function pad (str) {
   return str.length !== 2 ? 0 + str : str
 }
 
-},{"assert":151}],126:[function(require,module,exports){
+},{"assert":149}],126:[function(require,module,exports){
 module.exports = LRU
 
 function LRU (opts) {
@@ -7152,7 +7152,7 @@ function strip (str) {
   return '\n' + arr.join('\n')
 }
 
-},{"assert":151}],136:[function(require,module,exports){
+},{"assert":149}],136:[function(require,module,exports){
 var scheduler = require('nanoscheduler')()
 var assert = require('assert')
 
@@ -7609,21 +7609,21 @@ if (process.env.NODE_ENV !== 'production') {
 
 app.use(require('./stores/links'))
 
-app.route('/', require('./views/main'))
-app.route('/index.html', require('./views/main'))
+app.route('/', require('./views/images'))
+app.route('/index.html', require('./views/images'))
 
 app.route('#images', require('./views/images'))
 
-app.route('/hydra-links', require('./views/main'))
-app.route('/hydra-links/index.html', require('./views/main'))
-app.route('/hydra-links/index.html/#images', require('./views/images'))
-app.route('/hydra-links/images', require('./views/images'))
-app.route('/*', require('./views/404'))
+app.route('/garden', require('./views/images'))
+// app.route('/hydra-links/index.html', require('./views/main'))
+// app.route('/hydra-links/index.html/#images', require('./views/images'))
+// app.route('/hydra-links/images', require('./views/images'))
+// app.route('/*', require('./views/404'))
 
 module.exports = app.mount('body')
 
 }).call(this,require('_process'))
-},{"./stores/links":146,"./views/404":147,"./views/images":148,"./views/main":149,"_process":162,"choo":34,"choo-devtools":21,"choo-service-worker":31}],146:[function(require,module,exports){
+},{"./stores/links":146,"./views/images":147,"_process":160,"choo":34,"choo-devtools":21,"choo-service-worker":31}],146:[function(require,module,exports){
 var Airtable = require('airtable')
 // read-only API key from rhizomaticode
 var base = new Airtable({ apiKey: 'keyRHmFMa5W4S4TUJ' }).base('app1AzaEIEVOFm3nN')
@@ -7830,23 +7830,6 @@ function store(state, emitter) {
 
 },{"airtable":3}],147:[function(require,module,exports){
 var html = require('choo/html')
-
-var TITLE = 'garden-frontend - route not found'
-
-module.exports = view
-
-function view (state, emit) {
-  if (state.title !== TITLE) emit(state.events.DOMTITLECHANGE, TITLE)
-  return html`
-    <body class="sans-serif pa3">
-      <h1>Route not found.</h1>
-      <a class="pt2" href="/">Back to main.</a>
-    </body>
-  `
-}
-
-},{"choo/html":33}],148:[function(require,module,exports){
-var html = require('choo/html')
 const tagSelector = require('./tagSelector.js')
 var TITLE = 'garden-frontend - main'
 
@@ -7935,80 +7918,7 @@ function parseMarkdown(markdownText) {
   span.innerHTML = htmlText.trim()
   return span
 }
-},{"./tagSelector.js":150,"choo/html":33}],149:[function(require,module,exports){
-var html = require('choo/html')
-const tagSelector = require('./tagSelector.js')
-var TITLE = 'garden-frontend - main'
-
-module.exports = view
-
- const tagEl = (tags) => tags? html`<span>${tags.map((tag) => html`<span class="bg-light-gray ma1">${tag}</span>`)}` : ''
-const dateEl = (d) => d && d.length > 0 ? `(${d.slice(0, 4)})` : ''
-const entry = (link) => html`<div class="mv2"><a href="${link.Link}" target="_blank">${link.Title} </a>  <span class="f7">${dateEl(link['Date Created'])} ${link["Short Description"]} ${tagEl(link["Tags"])} </span></div>`
-
-const groupBy = function(xs, key) {
-  return xs.reduce(function(rv, x) {
-    (rv[x[key]] = rv[x[key]] || []).push(x);
-    return rv;
-  }, {});
-};
-
-
-function view (state, emit) {
-  if (state.title !== TITLE) emit(state.events.DOMTITLECHANGE, TITLE)
-  const categories = groupBy(state.links, "Category")
-
-  // const containsTag = state.tags.length > 0 ? (link) => {
-  //   console.log(link)
-  //   let b = false
-  //   if(Array.isArray(link.Tags)) {
-  //     link.Tags.forEach((tag) => {
-  //       if(state.tags.indexOf(tag) > -1) {
-  //         b = true
-  //       }
-  //     })
-  //   }
-  //   return b
-  // } : () => true
-
-  // ${state.currentResults.map(([key, links]) => html`<h4>${key}</h4>${
-  //   links.filter(containsTag).map((link) => entry(link))
-  // }`)}
-  console.log('current results', state.currentResults)
-  return html`
-    <body class="code lh-copy">
-      <main class="pa3 cf center">
-       <div>
-        ${tagSelector(state, emit)}
-       </div>
-       <div>
-       ${state.currentResults.map((l, i) => entry(l.link))}
-      </main>
-    </body>
-  `
-
-  function handleClick () {
-    emit('clicks:add', 1)
-  }
-}
-
-function parseMarkdown(markdownText) {
-	const htmlText = markdownText
-		.replace(/^### (.*$)/gim, '<h3>$1</h3>')
-		.replace(/^## (.*$)/gim, '<h2>$1</h2>')
-		.replace(/^# (.*$)/gim, '<h1>$1</h1>')
-		.replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>')
-		.replace(/\*\*(.*)\*\*/gim, '<b>$1</b>')
-		.replace(/\*(.*)\*/gim, '<i>$1</i>')
-		.replace(/!\[(.*?)\]\((.*?)\)/gim, "<img alt='$1' src='$2' />")
-		.replace(/\[(.*?)\]\((.*?)\)/gim, "<a href='$2'>$1</a>")
-	//	.replace(/\n$/gim, '<br />')
-
-	const span =  html`<span class="f6"></span>`
-  span.innerHTML = htmlText.trim()
-  return span
-}
-},{"./tagSelector.js":150,"choo/html":33}],150:[function(require,module,exports){
+},{"./tagSelector.js":148,"choo/html":33}],148:[function(require,module,exports){
 var html = require('choo/html')
 
 
@@ -8029,7 +7939,7 @@ var html = require('choo/html')
       ${state.tags.map((tag, i) => html`<div class="f7 pa1 ph1 ma0 pointer dim" style=${style(tag)} onclick=${() => emit('toggle tag', i)}>${tag.label}</div>`)}
      </div>`
   }
-},{"choo/html":33}],151:[function(require,module,exports){
+},{"choo/html":33}],149:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -8539,7 +8449,7 @@ var objectKeys = Object.keys || function (obj) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"object-assign":160,"util/":154}],152:[function(require,module,exports){
+},{"object-assign":158,"util/":152}],150:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -8564,14 +8474,14 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],153:[function(require,module,exports){
+},{}],151:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],154:[function(require,module,exports){
+},{}],152:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -9161,7 +9071,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":153,"_process":162,"inherits":152}],155:[function(require,module,exports){
+},{"./support/isBuffer":151,"_process":160,"inherits":150}],153:[function(require,module,exports){
 'use strict'
 
 exports.byteLength = byteLength
@@ -9315,9 +9225,9 @@ function fromByteArray (uint8) {
   return parts.join('')
 }
 
-},{}],156:[function(require,module,exports){
+},{}],154:[function(require,module,exports){
 
-},{}],157:[function(require,module,exports){
+},{}],155:[function(require,module,exports){
 (function (Buffer){
 /*!
  * The buffer module from node.js, for the browser.
@@ -11098,7 +11008,7 @@ function numberIsNaN (obj) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"base64-js":155,"buffer":157,"ieee754":159}],158:[function(require,module,exports){
+},{"base64-js":153,"buffer":155,"ieee754":157}],156:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -11623,7 +11533,7 @@ function functionBindPolyfill(context) {
   };
 }
 
-},{}],159:[function(require,module,exports){
+},{}],157:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = (nBytes * 8) - mLen - 1
@@ -11709,7 +11619,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],160:[function(require,module,exports){
+},{}],158:[function(require,module,exports){
 /*
 object-assign
 (c) Sindre Sorhus
@@ -11801,7 +11711,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	return to;
 };
 
-},{}],161:[function(require,module,exports){
+},{}],159:[function(require,module,exports){
 (function (process){
 // .dirname, .basename, and .extname methods are extracted from Node.js v8.11.1,
 // backported and transplited with Babel, with backwards-compat fixes
@@ -12107,7 +12017,7 @@ var substr = 'ab'.substr(-1) === 'b'
 ;
 
 }).call(this,require('_process'))
-},{"_process":162}],162:[function(require,module,exports){
+},{"_process":160}],160:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -12293,7 +12203,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],163:[function(require,module,exports){
+},{}],161:[function(require,module,exports){
 (function (global){
 /*! https://mths.be/punycode v1.4.1 by @mathias */
 ;(function(root) {
@@ -12830,7 +12740,7 @@ process.umask = function() { return 0; };
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],164:[function(require,module,exports){
+},{}],162:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12916,7 +12826,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],165:[function(require,module,exports){
+},{}],163:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13003,13 +12913,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],166:[function(require,module,exports){
+},{}],164:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":164,"./encode":165}],167:[function(require,module,exports){
+},{"./decode":162,"./encode":163}],165:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13743,7 +13653,7 @@ Url.prototype.parseHost = function() {
   if (host) this.hostname = host;
 };
 
-},{"./util":168,"punycode":163,"querystring":166}],168:[function(require,module,exports){
+},{"./util":166,"punycode":161,"querystring":164}],166:[function(require,module,exports){
 'use strict';
 
 module.exports = {
