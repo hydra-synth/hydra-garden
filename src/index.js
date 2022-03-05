@@ -12,15 +12,15 @@ if (process.env.NODE_ENV !== 'production') {
 
 app.use(require('./stores/links'))
 
-app.route('/', require('./views/main'))
-app.route('/index.html', require('./views/main'))
+app.route('/', require('./views/images'))
+app.route('/index.html', require('./views/images'))
 
 app.route('#images', require('./views/images'))
 
-app.route('/hydra-links', require('./views/main'))
-app.route('/hydra-links/index.html', require('./views/main'))
-app.route('/hydra-links/index.html/#images', require('./views/images'))
-app.route('/hydra-links/images', require('./views/images'))
-app.route('/*', require('./views/404'))
+app.route('/garden', require('./views/images'))
+// app.route('/hydra-links/index.html', require('./views/main'))
+// app.route('/hydra-links/index.html/#images', require('./views/images'))
+// app.route('/hydra-links/images', require('./views/images'))
+// app.route('/*', require('./views/404'))
 
 module.exports = app.mount('body')
