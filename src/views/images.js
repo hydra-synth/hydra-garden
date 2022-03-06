@@ -1,5 +1,7 @@
 var html = require('choo/html')
 const tagSelector = require('./tagSelector.js')
+
+// const tagSelector = require('./tagSelectorCategories.js')
 var TITLE = 'garden-frontend - main'
 
 module.exports = view
@@ -10,15 +12,14 @@ const tagEl = (tags) => html`<span>${tags.map((tag) => html`<span class="bg-gray
 // <a href="${link.Link}" target="_blank">${link.Title} </a> ${parseMarkdown(link.Description)} 
 // </div>`
 
-const rand = (min=0, max=1) => min + Math.random() * (max - min)
 
-const getStyle = ({link, width, id, top, left, selected, transition = 'none'}) => `
+const getStyle = ({link, selected, transition = 'none'}, {width,  top, left}) => `
 position: absolute; 
 top:${top}px; 
 left:${left}px; 
 box-shadow: 2px 2px 20px black;
 transition: ${transition};
-width:${selected ? Math.min(800, window.innerWidth) : width}px;
+width:${width}px;
 max-height: ${window.innerHeight - 200}px;
 cursor:move;
 pointer-events: ${transition == 'none'? 'none': 'all'};
@@ -28,24 +29,26 @@ background-color: ${link.color? link.color : '#eee'}
 
 const content = ({ selected, link}) => selected ? html`
 <div class="pa3">
-  <div class="f4">${link.Title}</div>
+  <div class="f5 dim"><a href="${link.Link}" target="_blank">${link.Title} </a></div>
+  <a class="" href="${link.Link}" target="_blank">
   <img style="" src="${link.Image[0].thumbnails.large.url}"/>
-  <div>${link['Short Description']}</div>
-  <div>${link['Description']}</div>
+  </a>
+  <div class="f7">${link['Short Description']}</div>
+  <div class="f7">${link['Description']}</div>
   <div>${tagEl(link.Tags)}</div>
 </div>
 ` : html`<img style="" src="${link.Image[0].thumbnails.large.url}"/>
 <div class="f7">${link.Title}</div>`
 
 const floatingImage = (opts, {onclick, onmousedown, onmouseup} = {}) => {
-const { link, id, selected } = opts
+const { link, id, selected, layout, selectedLayout } = opts
  return link.Image ? html`<div 
   class="bg-light-gray" 
   onclick="${onclick}"
   onmousedown="${onmousedown}"
   onmouseup="${onmouseup}"
   id="${id}"
-  style="${getStyle(opts)}">
+  style="${getStyle(opts, selected == true ? selectedLayout: layout)}">
  ${content(opts)}
 </div>` : ''
 }

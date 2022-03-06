@@ -1,30 +1,43 @@
-var Airtable = require('airtable')
+const { rand } = require('./../lib/util.js')
+
+const Airtable = require('airtable')
 // read-only API key from rhizomaticode
-var base = new Airtable({ apiKey: 'keyRHmFMa5W4S4TUJ' }).base('app1AzaEIEVOFm3nN')
+const base = new Airtable({ apiKey: 'keyRHmFMa5W4S4TUJ' }).base('app1AzaEIEVOFm3nN')
 module.exports = store
 
 function store(state, emitter) {
   state.links = [] // all links
 
-  state.tags = []
+  state.isDragging = false
 
-  state.isDragging = false 
-
-  state.currentResults = [] 
+  state.currentResults = []
 
   state.drag = { x: 0, y: 0 }
+
+  state.layout = {
+    marginTop: 200
+  }
 
   state.colors = ['red']
 
   state.colorsByTag = {}
 
   window.addEventListener('resize', () => {
-    updateResults()
+    updateLinkLayout()
     emitter.emit('render')
   })
 
   emitter.on('navigate', () => {
     console.log(`Navigated to ${state.route}`)
+  })
+
+  emitter.on('update link layout', () => {
+    updateLinkLayout()
+  })
+
+  emitter.on('clear selection', () => {
+    state.currentResults.forEach((el) => el.selected = false)
+    emitter.emit('render')
   })
 
   emitter.on('image:mousedown', (i, e) => {
@@ -39,12 +52,7 @@ function store(state, emitter) {
     emitter.emit('render')
   })
 
-  emitter.on('clear selection', () => {
-    state.currentResults.forEach((el) => el.selected = false)
-    emitter.emit('render')
-  })
-
-  function stopDrag () {
+  function stopDrag() {
     state.drag.el.transition = 'all 1s'
     document.onmousemove = null
     document.onmouseup = null
@@ -61,8 +69,13 @@ function store(state, emitter) {
     const y = state.drag.y - e.clientY
     state.drag.x = e.clientX
     state.drag.y = e.clientY
-    el.top = el.top - y
-    el.left = el.left - x
+    if(el.selected){
+      el.selectedLayout.top = el.selectedLayout.top - y
+      el.selectedLayout.left = el.selectedLayout.left - x
+    } else {
+      el.layout.top = el.layout.top - y
+      el.layout.left = el.layout.left - x
+    }
     emitter.emit('render')
   }
 
@@ -77,95 +90,53 @@ function store(state, emitter) {
     state.currentResults.forEach((el) => el.selected = false)
     const el = state.currentResults[i]
     el.selected = true
-    const width = Math.min(800, window.innerWidth)
-    if(el.left + width > window.innerWidth) {
-      el.left =  rand(10, window.innerWidth - width - 10)
-    }
-    if(el.top > window.innerHeight / 3) el.top = rand(20, window.innerHeight/3)
-    // el.top = 60
-    // el.left = 60
-    // el.width = window.innerWidth - 200
+    // const width = Math.min(600, window.innerWidth)
+    // if (el.left + width > window.innerWidth) {
+    //   el.left = rand(10, window.innerWidth - width - 10)
+    // }
+    // if (el.top > window.innerHeight / 3) el.top = rand(20, window.innerHeight / 3)
   }
 
   emitter.on('image:click', (i) => {
     bringToFront(i)
     setSelected(state.currentResults.length - 1)
     emitter.emit('render')
-   // state.currentResults = newResults
-    //emitter.emit('render')
-    console.log('clicked on image', state.currentResults, i)
   })
 
-  emitter.on('toggle tag', (tagIndex) => {
-    state.tags[tagIndex].selected = ! state.tags[tagIndex].selected
-    filterResultsByTags()
-    emitter.emit('render')
-  })
 
-  function filterResultsByTags () {
-    const filtered = state.tags.filter((tag) => tag.selected)
-    const tags = filtered.map((tag) => tag.label)
-    state.colors = filtered.map((tag) => tag.color)
-    state.currentResults = state.links.filter((link) => {
-      let containsTag = false
-      if(link.Tags) {
-        link.Tags.forEach((t) => {
-          if(tags.indexOf(t) > -1) {
-            containsTag = true
-            console.log(t, state.colorsByTag)
-            link.color = state.colorsByTag[t]
-          }
-        })
-      }
-      return containsTag
-    }).map((link, i) => ({
-      link: link,
-      width: rand(100, 350),
-      top: Math.random() * window.innerHeight,
-      left: Math.random() * (window.innerWidth - 300),
-      transition: 'all 1s',
-      selected: false,
-      id: `link-${i}`
-    }))
-    updateResults()
-    emitter.emit('render')
-    console.log('tags are', tags)
-  }
 
-  // update tags currently shown
-  function updateTags () {
-    const allTags =  state.links.reduce((prev, next) => prev.concat(next.Tags), [])
-    const filteredTags = allTags.filter((item, index) => allTags.indexOf(item) === index)
-    state.colorsByTag = {}
-    state.tags = filteredTags
-    .map((tag, i) => ({
-      label: tag, 
-      selected: false, 
-      color: `hsl(${360*i/filteredTags.length}, 100%, 70%)`
-    }))
-
-    state.tags.forEach((tag) => { state.colorsByTag[tag.label] = tag.color })
-    updateResults()
-  }
-
-  const rand = (min=0, max=1) => min + Math.random() * (max - min)
-
-  function updateResults() {
+  function updateLinkLayout() {
     const length = state.currentResults.length
-    const _w = 800
-    let w = length > 8 ? (length > 12 ? rand(_w/6, _w/5) : rand(_w/4, _w/3)) : rand(_w/2, _w/3)
+    const _w = 700
+    let w = length > 8 ? (length > 12 ? rand(_w / 6, _w / 5) : rand(_w / 4, _w / 3)) : rand(_w / 2, _w / 3)
     state.currentResults.forEach((link, i) => {
-      const width = link.selected? Math.min(800, window.innerWidth) : w
-      link.width = w
-     // if(!link.selected) {
-        link.top=  Math.random() * (window.innerHeight - 200) + 40
-        link.left = Math.random() * (window.innerWidth - 300)
-     // }
+
+      const width = link.selected ? Math.min(500, window.innerWidth) : w
+      
       link.transition = 'all 1s'
-       if(link.left + width > window.innerWidth) {
-         link.left =  rand(10, window.innerWidth - width - 10)
-       }
-      if(link.selected && link.top > window.innerHeight / 3) link.top = rand(20, window.innerHeight/3)
+      // default layout of the link
+      link.layout = {
+        width: w,
+        top: Math.random() * (window.innerHeight - 200 - state.layout.marginTop) + state.layout.marginTop,
+        left: Math.random() * (window.innerWidth - 300),
+      }
+      if (link.layout.left + width > window.innerWidth) {
+        link.layout.left = rand(10, window.innerWidth - width - 10)
+      }
+
+      const selectedWidth =  Math.min(500, window.innerWidth)
+      // layout of the link when selected
+      link.selectedLayout = {
+        width: selectedWidth,
+        top: rand(20, window.innerHeight / 3),
+        left: link.layout.left
+      }
+     
+      if (link.selectedLayout.left + selectedWidth > window.innerWidth) {
+        link.selectedLayout.left = rand(10, window.innerWidth - selectedWidth - 10)
+      }
+
+     // if (link.selected && link.layout.top > window.innerHeight / 3) link.layout.top = rand(20, window.innerHeight / 3)
     })
   }
 
@@ -173,31 +144,23 @@ function store(state, emitter) {
     // Selecting the first 50 records in Grid view:
     // maxRecords: 1000,
     pageSize: 10,
-    view: "Grid view"
+    view: "Grid view",
+  //   filterByFormula: `OR(
+  //     FIND("performance", Type) > 0,
+  //     FIND("net art", Type) > 0
+  // )`
   }).eachPage(function page(records, fetchNextPage) {
     state.links = state.links.concat(records.map((record) => record.fields)).sort((a, b) => Math.random)
     console.log('records', records, state.links)
     state.currentResults = state.links.map((link, i) => ({
       link: link,
-      width: rand(100, 350),
-      top: Math.random() * window.innerHeight,
-      left: Math.random() * (window.innerWidth - 300),
       id: `link-${i}`,
       selected: false
     }))
-   fetchNextPage()
-    updateTags()
+    fetchNextPage()
+    emitter.emit('update tags')
     emitter.emit(state.events.RENDER)
   }, function done(err) {
     if (err) { console.error(err); return; }
   })
-
-  //   const DATA_URL = `${window.location.origin}/json`
-  //   fetch(DATA_URL)
-  //   .then(response => response.json())
-  //   .then(data => {
-  //     state.links = data 
-  //     console.log(state.links)
-  //     emitter.emit(state.events.RENDER)
-  //   });
 }

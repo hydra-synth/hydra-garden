@@ -9,7 +9,7 @@ if (process.env.NODE_ENV !== 'production') {
 } else {
   app.use(require('choo-service-worker')())
 }
-
+app.use(require('./stores/tags'))
 app.use(require('./stores/links'))
 
 app.route('/', require('./views/main'))
