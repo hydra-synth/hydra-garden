@@ -1,6 +1,6 @@
 var html = require('choo/html')
 const tagSelector = require('./tagSelector.js')
-
+const pageSelector = require('./pageSelector.js')
 // const tagSelector = require('./tagSelectorCategories.js')
 var TITLE = 'garden-frontend - main'
 
@@ -29,16 +29,16 @@ background-color: ${link.color? link.color : '#eee'}
 
 const content = ({ selected, link}) => selected ? html`
 <div class="pa3">
-  <div class="f5 dim"><a href="${link.Link}" target="_blank">${link.Title} </a></div>
+  <div class="f5 dim b"><a href="${link.Link}" target="_blank">${link.Title} </a></div>
   <a class="" href="${link.Link}" target="_blank">
   <img style="" src="${link.Image[0].thumbnails.large.url}"/>
   </a>
-  <div class="f7">${link['Short Description']}</div>
-  <div class="f7">${link['Description']}</div>
+  <div class="f6">${link['Short Description']}</div>
+  <div class="f6">${link['Description']}</div>
   <div>${tagEl(link.Tags)}</div>
 </div>
 ` : html`<img style="" src="${link.Image[0].thumbnails.large.url}"/>
-<div class="f7">${link.Title}</div>`
+<div class="f6">${link.Title}</div>`
 
 const floatingImage = (opts, {onclick, onmousedown, onmouseup} = {}) => {
 const { link, id, selected, layout, selectedLayout } = opts
@@ -59,12 +59,13 @@ function view (state, emit) {
   if (state.title !== TITLE) emit(state.events.DOMTITLECHANGE, TITLE)
 
   return html`
-    <body class="code lh-copy w-100 h-100">
+    <body class="lh-copy w-100 h-100" style="font-family: 'Space Mono', monospace;">
       <main class="pa0 cf center w-100 h-100" style="pointer-events:${state.isDragging?'none':'all'}" >
         <div class="bg-red w-100 h-100 absolute" style="background:linear-gradient(${state.colors.join(',')});transition:background-color 1s;" onclick=${(e) => emit('clear selection')} ></div>
+        ${pageSelector(state, emit)}
         ${tagSelector(state, emit)}
       
-        ${state.currentResults.map((l, i) => floatingImage(l, {
+        ${state.filteredLinks.visible.map((l, i) => floatingImage(l, {
           onclick: (e) => {emit('image:click', i, e)},
           onmousedown: (e) => {emit('image:mousedown', i, e)},
           onmouseup: (e) => {emit('image:mouseup', i, e)},
@@ -86,7 +87,7 @@ function parseMarkdown(markdownText) {
 		.replace(/\[(.*?)\]\((.*?)\)/gim, "<a href='$2'>$1</a>")
 	//	.replace(/\n$/gim, '<br />')
 
-	const span =  html`<span class="f7"></span>`
+	const span =  html`<span class="f6"></span>`
   span.innerHTML = htmlText.trim()
   return span
 }

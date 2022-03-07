@@ -11,6 +11,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 app.use(require('./stores/tags'))
 app.use(require('./stores/links'))
+app.use(require('./stores/layout'))
 
 app.route('/', require('./views/images'))
 app.route('/index.html', require('./views/images'))

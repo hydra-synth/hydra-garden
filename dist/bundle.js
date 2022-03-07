@@ -501,7 +501,7 @@ else {
 }
 module.exports = AbortController;
 
-},{"abort-controller":154,"abortcontroller-polyfill/dist/cjs-ponyfill":1}],3:[function(require,module,exports){
+},{"abort-controller":159,"abortcontroller-polyfill/dist/cjs-ponyfill":1}],3:[function(require,module,exports){
 (function (process){
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
@@ -577,7 +577,7 @@ var Airtable = /** @class */ (function () {
 module.exports = Airtable;
 
 }).call(this,require('_process'))
-},{"./airtable_error":4,"./base":5,"./record":17,"./table":19,"_process":160}],4:[function(require,module,exports){
+},{"./airtable_error":4,"./base":5,"./record":17,"./table":19,"_process":165}],4:[function(require,module,exports){
 "use strict";
 var AirtableError = /** @class */ (function () {
     function AirtableError(error, message, statusCode) {
@@ -889,7 +889,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 var node_fetch_1 = __importDefault(require("node-fetch"));
 module.exports = typeof window === 'undefined' ? node_fetch_1.default : window.fetch.bind(window);
 
-},{"node-fetch":154}],10:[function(require,module,exports){
+},{"node-fetch":159}],10:[function(require,module,exports){
 "use strict";
 /* eslint-enable @typescript-eslint/no-explicit-any */
 function has(object, property) {
@@ -1008,7 +1008,7 @@ module.exports = objectToQueryParamString;
 module.exports = process.env.npm_package_version;
 
 }).call(this,require('_process'))
-},{"_process":160}],15:[function(require,module,exports){
+},{"_process":165}],15:[function(require,module,exports){
 "use strict";
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
@@ -1666,7 +1666,7 @@ function expose (opts) {
   }
 }
 
-},{"./lib/copy":22,"./lib/debug":23,"./lib/help":24,"./lib/log":25,"./lib/logger":26,"./lib/perf":27,"./lib/storage":28,"events":156,"wayfarer/get-all-routes":142}],22:[function(require,module,exports){
+},{"./lib/copy":22,"./lib/debug":23,"./lib/help":24,"./lib/log":25,"./lib/logger":26,"./lib/perf":27,"./lib/storage":28,"events":161,"wayfarer/get-all-routes":142}],22:[function(require,module,exports){
 var stateCopy = require('state-copy')
 var pluck = require('plucker')
 
@@ -1724,7 +1724,7 @@ function debug (state, emitter, app, localEmitter) {
   })
 }
 
-},{"assert":149,"nanologger":125,"object-change-callsite":135}],24:[function(require,module,exports){
+},{"assert":154,"nanologger":125,"object-change-callsite":135}],24:[function(require,module,exports){
 module.exports = help
 
 function help () {
@@ -2264,7 +2264,7 @@ ChooHooks.prototype._emitLoaded = function () {
   })
 }
 
-},{"assert":149,"nanoscheduler":133,"on-performance":136}],31:[function(require,module,exports){
+},{"assert":154,"nanoscheduler":133,"on-performance":136}],31:[function(require,module,exports){
 (function (__dirname){
 /* global MessageChannel Notification */
 var assert = require('assert')
@@ -2396,7 +2396,7 @@ function serviceWorker (name, opts) {
 }
 
 }).call(this,"/node_modules/choo-service-worker")
-},{"assert":149,"path":159,"url":165}],32:[function(require,module,exports){
+},{"assert":154,"path":164,"url":170}],32:[function(require,module,exports){
 var assert = require('assert')
 var LRU = require('nanolru')
 
@@ -3040,7 +3040,7 @@ if (typeof module === 'object' && module.exports) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":155}],37:[function(require,module,exports){
+},{"buffer":160}],37:[function(require,module,exports){
 'use strict'
 
 module.exports = ready
@@ -6366,7 +6366,7 @@ function pad (str) {
   return str.length !== 2 ? 0 + str : str
 }
 
-},{"assert":149}],126:[function(require,module,exports){
+},{"assert":154}],126:[function(require,module,exports){
 module.exports = LRU
 
 function LRU (opts) {
@@ -7152,7 +7152,7 @@ function strip (str) {
   return '\n' + arr.join('\n')
 }
 
-},{"assert":149}],136:[function(require,module,exports){
+},{"assert":154}],136:[function(require,module,exports){
 var scheduler = require('nanoscheduler')()
 var assert = require('assert')
 
@@ -7606,8 +7606,9 @@ if (process.env.NODE_ENV !== 'production') {
 } else {
   app.use(require('choo-service-worker')())
 }
-
+app.use(require('./stores/tags'))
 app.use(require('./stores/links'))
+app.use(require('./stores/layout'))
 
 app.route('/', require('./views/images'))
 app.route('/index.html', require('./views/images'))
@@ -7623,214 +7624,354 @@ app.route('/garden', require('./views/images'))
 module.exports = app.mount('body')
 
 }).call(this,require('_process'))
-},{"./stores/links":146,"./views/images":147,"_process":160,"choo":34,"choo-devtools":21,"choo-service-worker":31}],146:[function(require,module,exports){
-var Airtable = require('airtable')
+},{"./stores/layout":147,"./stores/links":148,"./stores/tags":149,"./views/images":150,"_process":165,"choo":34,"choo-devtools":21,"choo-service-worker":31}],146:[function(require,module,exports){
+const rand = (min=0, max=1) => min + Math.random() * (max - min)
+
+module.exports = {
+    rand: rand
+}
+},{}],147:[function(require,module,exports){
+const { rand } = require('./../lib/util.js')
+
+module.exports = function (state, emitter) {
+    state.drag = { x: 0, y: 0 }
+
+    state.layout = {
+        marginTop: 200
+    }
+
+    state.colors = ['red']
+
+    state.isDragging = false
+
+    state.colorsByTag = {}
+
+    window.addEventListener('resize', () => {
+        updateLinkLayout()
+        emitter.emit('render')
+    })
+
+    emitter.on('update link layout', () => {
+        updateLinkLayout()
+    })
+
+    emitter.on('clear selection', () => {
+        state.filteredLinks.visible.forEach((el) => el.selected = false)
+        emitter.emit('render')
+    })
+
+    emitter.on('image:mousedown', (i, e) => {
+        e.preventDefault()
+        const el = state.filteredLinks.visible[i]
+        bringToFront(i)
+        state.drag.x = e.clientX
+        state.drag.y = e.clientY
+        state.drag.el = el
+        document.onmousemove = dragElement
+        document.onmouseup = stopDrag
+        emitter.emit('render')
+    })
+
+    function stopDrag() {
+        state.drag.el.transition = 'all 1s'
+        document.onmousemove = null
+        document.onmouseup = null
+        state.isDragging = false
+        emitter.emit('render')
+    }
+
+
+
+    function dragElement(e) {
+        e.preventDefault()
+        state.isDragging = true
+        const el = state.drag.el
+        el.transition = 'none'
+        const x = state.drag.x - e.clientX
+        const y = state.drag.y - e.clientY
+        state.drag.x = e.clientX
+        state.drag.y = e.clientY
+        if (el.selected) {
+            el.selectedLayout.top = el.selectedLayout.top - y
+            el.selectedLayout.left = el.selectedLayout.left - x
+        } else {
+            el.layout.top = el.layout.top - y
+            el.layout.left = el.layout.left - x
+        }
+        emitter.emit('render')
+    }
+
+    function bringToFront(i) {
+        const el = state.filteredLinks.visible[i]
+        state.filteredLinks.visible.splice(i, 1)
+        //console.log(newResults, )
+        state.filteredLinks.visible.push(el)
+    }
+
+    function setSelected(i) {
+        state.filteredLinks.visible.forEach((el) => el.selected = false)
+        const el = state.filteredLinks.visible[i]
+        el.selected = true
+        // const width = Math.min(600, window.innerWidth)
+        // if (el.left + width > window.innerWidth) {
+        //   el.left = rand(10, window.innerWidth - width - 10)
+        // }
+        // if (el.top > window.innerHeight / 3) el.top = rand(20, window.innerHeight / 3)
+    }
+
+    emitter.on('image:click', (i) => {
+        bringToFront(i)
+        setSelected(state.filteredLinks.visible.length - 1)
+        emitter.emit('render')
+    })
+
+
+    function updateLinkLayout() {
+       // console.log('updating layout', state)
+        const length = state.filteredLinks.visible.length
+        const _w = 700
+        let w = length > 8 ? (length > 12 ? rand(_w / 6, _w / 5) : rand(_w / 4, _w / 3)) : rand(_w / 2, _w / 3)
+        state.filteredLinks.visible.forEach((link, i) => {
+           // console.log('filtered', link)
+
+            const width = link.selected ? Math.min(500, window.innerWidth) : w
+
+            link.transition = 'all 1s'
+            // default layout of the link
+            link.layout = {
+                width: w,
+                top: Math.random() * (window.innerHeight - 200 - state.layout.marginTop) + state.layout.marginTop,
+                left: Math.random() * (window.innerWidth - 300),
+            }
+            link.id = `link-${i}`
+            if (link.layout.left + width > window.innerWidth) {
+                link.layout.left = rand(10, window.innerWidth - width - 10)
+            }
+
+            const selectedWidth = Math.min(500, window.innerWidth)
+            // layout of the link when selected
+            link.selectedLayout = {
+                width: selectedWidth,
+                top: rand(20, window.innerHeight / 3),
+                left: link.layout.left
+            }
+
+            if (link.selectedLayout.left + selectedWidth > window.innerWidth) {
+                link.selectedLayout.left = rand(10, window.innerWidth - selectedWidth - 10)
+            }
+          //  console.log('finished updating layout')
+            // if (link.selected && link.layout.top > window.innerHeight / 3) link.layout.top = rand(20, window.innerHeight / 3)
+        })
+    }
+}
+},{"./../lib/util.js":146}],148:[function(require,module,exports){
+const { rand } = require('./../lib/util.js')
+
+const Airtable = require('airtable')
 // read-only API key from rhizomaticode
-var base = new Airtable({ apiKey: 'keyRHmFMa5W4S4TUJ' }).base('app1AzaEIEVOFm3nN')
+const base = new Airtable({ apiKey: 'keyRHmFMa5W4S4TUJ' }).base('app1AzaEIEVOFm3nN')
 module.exports = store
 
 function store(state, emitter) {
-  state.links = [] // all links
+  state.links = [] // all unfiltered links
+  // all current search results
+  // state.filteredLinks.visible = []
 
-  state.tags = []
+  // search results split into pages
+  state.filteredLinks = {
+    pageSize: 15,
+    currPage: 0,
+    totalPages: 0,
+    all: [],
+    visible: []
+  }
+  
+  // emitter.on('navigate', () => {
+  //   console.log(`Navigated to ${state.route}`)
+  // })
 
-  state.isDragging = false 
-
-  state.currentResults = [] 
-
-  state.drag = { x: 0, y: 0 }
-
-  state.colors = ['red']
-
-  state.colorsByTag = {}
-
-  window.addEventListener('resize', () => {
-    updateResults()
+  emitter.on('set page', (page) => {
+    setPage(page)
     emitter.emit('render')
   })
 
-  emitter.on('navigate', () => {
-    console.log(`Navigated to ${state.route}`)
+  emitter.on('update page count', (page) => {
+    updatePageCount()
   })
 
-  emitter.on('image:mousedown', (i, e) => {
-    e.preventDefault()
-    const el = state.currentResults[i]
-    bringToFront(i)
-    state.drag.x = e.clientX
-    state.drag.y = e.clientY
-    state.drag.el = el
-    document.onmousemove = dragElement
-    document.onmouseup = stopDrag
-    emitter.emit('render')
-  })
+  function setPage(index = 0) {
+    const l = state.filteredLinks
+    if(index < l.totalPages) l.currPage = index
+    l.visible = l.all.slice(l.pageSize*l.currPage, l.pageSize*(l.currPage+1))
+    emitter.emit('update link layout')
 
-  emitter.on('clear selection', () => {
-    state.currentResults.forEach((el) => el.selected = false)
-    emitter.emit('render')
-  })
-
-  function stopDrag () {
-    state.drag.el.transition = 'all 1s'
-    document.onmousemove = null
-    document.onmouseup = null
-    state.isDragging = false
-    emitter.emit('render')
   }
 
-  function dragElement(e) {
-    e.preventDefault()
-    state.isDragging = true
-    const el = state.drag.el
-    el.transition = 'none'
-    const x = state.drag.x - e.clientX
-    const y = state.drag.y - e.clientY
-    state.drag.x = e.clientX
-    state.drag.y = e.clientY
-    el.top = el.top - y
-    el.left = el.left - x
-    emitter.emit('render')
+  function updatePageCount() {
+    const l = state.filteredLinks
+    l.totalPages = Math.ceil(l.all.length/l.pageSize)
+    if(l.currPage > l.totalPages) l.currPage = 0
+    setPage(0)
   }
 
-  function bringToFront(i) {
-    const el = state.currentResults[i]
-    state.currentResults.splice(i, 1)
-    //console.log(newResults, )
-    state.currentResults.push(el)
-  }
-
-  function setSelected(i) {
-    state.currentResults.forEach((el) => el.selected = false)
-    const el = state.currentResults[i]
-    el.selected = true
-    const width = Math.min(800, window.innerWidth)
-    if(el.left + width > window.innerWidth) {
-      el.left =  rand(10, window.innerWidth - width - 10)
-    }
-    if(el.top > window.innerHeight / 3) el.top = rand(20, window.innerHeight/3)
-    // el.top = 60
-    // el.left = 60
-    // el.width = window.innerWidth - 200
-  }
-
-  emitter.on('image:click', (i) => {
-    bringToFront(i)
-    setSelected(state.currentResults.length - 1)
-    emitter.emit('render')
-   // state.currentResults = newResults
-    //emitter.emit('render')
-    console.log('clicked on image', state.currentResults, i)
-  })
-
-  emitter.on('toggle tag', (tagIndex) => {
-    state.tags[tagIndex].selected = ! state.tags[tagIndex].selected
-    filterResultsByTags()
-    emitter.emit('render')
-  })
-
-  function filterResultsByTags () {
-    const filtered = state.tags.filter((tag) => tag.selected)
-    const tags = filtered.map((tag) => tag.label)
-    state.colors = filtered.map((tag) => tag.color)
-    state.currentResults = state.links.filter((link) => {
-      let containsTag = false
-      if(link.Tags) {
-        link.Tags.forEach((t) => {
-          if(tags.indexOf(t) > -1) {
-            containsTag = true
-            console.log(t, state.colorsByTag)
-            link.color = state.colorsByTag[t]
-          }
-        })
-      }
-      return containsTag
-    }).map((link, i) => ({
-      link: link,
-      width: rand(100, 350),
-      top: Math.random() * window.innerHeight,
-      left: Math.random() * (window.innerWidth - 300),
-      transition: 'all 1s',
-      selected: false,
-      id: `link-${i}`
-    }))
-    updateResults()
-    emitter.emit('render')
-    console.log('tags are', tags)
-  }
-
-  // update tags currently shown
-  function updateTags () {
-    const allTags =  state.links.reduce((prev, next) => prev.concat(next.Tags), [])
-    const filteredTags = allTags.filter((item, index) => allTags.indexOf(item) === index)
-    state.colorsByTag = {}
-    state.tags = filteredTags
-    .map((tag, i) => ({
-      label: tag, 
-      selected: false, 
-      color: `hsl(${360*i/filteredTags.length}, 100%, 70%)`
-    }))
-
-    state.tags.forEach((tag) => { state.colorsByTag[tag.label] = tag.color })
-    updateResults()
-  }
-
-  const rand = (min=0, max=1) => min + Math.random() * (max - min)
-
-  function updateResults() {
-    const length = state.currentResults.length
-    const _w = 800
-    let w = length > 8 ? (length > 12 ? rand(_w/6, _w/5) : rand(_w/4, _w/3)) : rand(_w/2, _w/3)
-    state.currentResults.forEach((link, i) => {
-      const width = link.selected? Math.min(800, window.innerWidth) : w
-      link.width = w
-     // if(!link.selected) {
-        link.top=  Math.random() * (window.innerHeight - 200) + 40
-        link.left = Math.random() * (window.innerWidth - 300)
-     // }
-      link.transition = 'all 1s'
-       if(link.left + width > window.innerWidth) {
-         link.left =  rand(10, window.innerWidth - width - 10)
-       }
-      if(link.selected && link.top > window.innerHeight / 3) link.top = rand(20, window.innerHeight/3)
-    })
-  }
 
   base('Links').select({
     // Selecting the first 50 records in Grid view:
     // maxRecords: 1000,
-    pageSize: 10,
-    view: "Grid view"
+    pageSize: 100,
+    view: "Grid view",
+  //   filterByFormula: `OR(
+  //     FIND("performance", Type) > 0,
+  //     FIND("net art", Type) > 0
+  // )`
   }).eachPage(function page(records, fetchNextPage) {
     state.links = state.links.concat(records.map((record) => record.fields)).sort((a, b) => Math.random)
     console.log('records', records, state.links)
-    state.currentResults = state.links.map((link, i) => ({
+    state.filteredLinks.all = state.links.map((link, i) => ({
       link: link,
-      width: rand(100, 350),
-      top: Math.random() * window.innerHeight,
-      left: Math.random() * (window.innerWidth - 300),
-      id: `link-${i}`,
+      // id: `link-${i}`,
       selected: false
-    }))
-   fetchNextPage()
-    updateTags()
+    })).sort(() => (Math.random() > .5) ? 1 : -1)
+
+     fetchNextPage()
+     updatePageCount()
+    emitter.emit('update tags')
+    // emitter.emit('update link layout')
     emitter.emit(state.events.RENDER)
   }, function done(err) {
     if (err) { console.error(err); return; }
   })
-
-  //   const DATA_URL = `${window.location.origin}/json`
-  //   fetch(DATA_URL)
-  //   .then(response => response.json())
-  //   .then(data => {
-  //     state.links = data 
-  //     console.log(state.links)
-  //     emitter.emit(state.events.RENDER)
-  //   });
 }
 
-},{"airtable":3}],147:[function(require,module,exports){
+},{"./../lib/util.js":146,"airtable":3}],149:[function(require,module,exports){
+const { rand } = require('./../lib/util.js')
+module.exports = function store(state, emitter) {
+    state.tags = [] // old version of tags
+
+    state.select = ['Category', 'Formats', 'Types', 'Themes', 'Techniques used'].map((field) => ({
+        field: field,
+        options: [],
+    }))
+    //     { field: 'Category', options: []},
+    //     'Type': [],
+    //     'Theme': [],
+    //     // 'Language': [],
+    //     // 'Location': [],
+    //     'Format': [],
+    //     'Techniques used': [],
+
+    //     // 'Year': []
+    // ]
+
+    emitter.on('toggle category tag', (_field, tagIndex) => {
+        const field = state.select.filter((obj) => obj.field === _field)[0]
+        console.log(field, 'tags')
+        field.options[tagIndex].selected = !field.options[tagIndex].selected
+        // state.tags[tagIndex].selected = !state.tags[tagIndex].selected
+        // filterResultsByTags()
+        emitter.emit('render')
+    })
+
+    // older version
+    emitter.on('toggle tag', (tagIndex) => {
+        if(tagIndex === 0) {
+            state.tags[0].selected = true
+            state.tags.forEach((tag, i) => {
+                if(i > 0) tag.selected = false
+            })
+        } else {
+            state.tags[tagIndex].selected = !state.tags[tagIndex].selected
+            state.tags[0].selected = false
+        }
+        filterResultsByTags()
+        emitter.emit('render')
+    })
+
+    emitter.on('update tags', () => {
+        console.log('updating tags')
+        updateTags()
+        getTagNames()
+    })
+
+    function filterResultsByTags() {
+        // if all is selected
+        if(state.tags[0].selected == true) {
+            state.filteredLinks.all = state.links
+        } else {
+        const filtered = state.tags.filter((tag) => tag.selected)
+        const tags = filtered.map((tag) => tag.label)
+        state.colors = filtered.map((tag) => tag.color)
+        state.filteredLinks.all = state.links.filter((link) => {
+            let containsTag = false
+            if (link.Tags) {
+                link.Tags.forEach((t) => {
+                    if (tags.indexOf(t) > -1) {
+                        containsTag = true
+                        console.log(t, state.colorsByTag)
+                        link.color = state.colorsByTag[t]
+                    }
+                })
+            }
+            return containsTag
+        })
+    }
+    state.filteredLinks.all = state.filteredLinks.all.map((link, i) => ({
+            link: link,
+            width: rand(100, 350),
+            top: Math.random() * window.innerHeight,
+            left: Math.random() * (window.innerWidth - 300),
+            transition: 'all 1s',
+            selected: false,
+            id: `link-${i}`
+        }))
+        console.log(state.filteredLinks.all)
+
+        emitter.emit('update page count')
+        emitter.emit('render')
+       // console.log('tags are', tags)
+    }
+
+    function getTagNames() {
+        console.log('num links', state.links.length)
+        state.select.forEach((obj) => {
+            const tags = state.links.reduce((prev, next) => prev.concat(next[obj.field]), [])
+
+           // console.log(fieldName, tags)
+            const filteredTags = tags.filter((item, index) => tags.indexOf(item) === index).filter((item) => item !== undefined)
+            obj.options = filteredTags.map((tag, i) => ({
+                label: tag,
+                selected: false,
+                color: `hsl(${360 * i / filteredTags.length}, 100%, 70%)`
+            }))
+        })
+        console.log(state.select)
+    }
+
+    // (older) update tags currently shown
+    function updateTags() {
+        const allTags = state.links.reduce((prev, next) => prev.concat(next.Tags), [])
+        const filteredTags = allTags.filter((item, index) => allTags.indexOf(item) === index)
+        filteredTags.unshift('all')
+        state.colorsByTag = {}
+        console.log('tags', allTags, filteredTags)
+        state.tags = filteredTags
+            .map((tag, i) => ({
+                label: tag,
+                selected: tag == 'all' ? true : false,
+                color: `hsl(${360 * i / filteredTags.length}, 100%, 70%)`
+            }))
+            //.sort(() => (Math.random() > .5) ? 1 : -1)
+
+        state.tags.forEach((tag) => { state.colorsByTag[tag.label] = tag.color })
+        console.log(state.tags)
+        emitter.emit('update page count')
+    }
+}
+},{"./../lib/util.js":146}],150:[function(require,module,exports){
 var html = require('choo/html')
 const tagSelector = require('./tagSelector.js')
+const pageSelector = require('./pageSelector.js')
+// const tagSelector = require('./tagSelectorCategories.js')
 var TITLE = 'garden-frontend - main'
 
 module.exports = view
@@ -7841,15 +7982,14 @@ const tagEl = (tags) => html`<span>${tags.map((tag) => html`<span class="bg-gray
 // <a href="${link.Link}" target="_blank">${link.Title} </a> ${parseMarkdown(link.Description)} 
 // </div>`
 
-const rand = (min=0, max=1) => min + Math.random() * (max - min)
 
-const getStyle = ({link, width, id, top, left, selected, transition = 'none'}) => `
+const getStyle = ({link, selected, transition = 'none'}, {width,  top, left}) => `
 position: absolute; 
 top:${top}px; 
 left:${left}px; 
 box-shadow: 2px 2px 20px black;
 transition: ${transition};
-width:${selected ? Math.min(800, window.innerWidth) : width}px;
+width:${width}px;
 max-height: ${window.innerHeight - 200}px;
 cursor:move;
 pointer-events: ${transition == 'none'? 'none': 'all'};
@@ -7859,24 +7999,26 @@ background-color: ${link.color? link.color : '#eee'}
 
 const content = ({ selected, link}) => selected ? html`
 <div class="pa3">
-  <div class="f4">${link.Title}</div>
+  <div class="f5 dim b"><a href="${link.Link}" target="_blank">${link.Title} </a></div>
+  <a class="" href="${link.Link}" target="_blank">
   <img style="" src="${link.Image[0].thumbnails.large.url}"/>
-  <div>${link['Short Description']}</div>
-  <div>${link['Description']}</div>
+  </a>
+  <div class="f6">${link['Short Description']}</div>
+  <div class="f6">${link['Description']}</div>
   <div>${tagEl(link.Tags)}</div>
 </div>
 ` : html`<img style="" src="${link.Image[0].thumbnails.large.url}"/>
-<div class="f7">${link.Title}</div>`
+<div class="f6">${link.Title}</div>`
 
 const floatingImage = (opts, {onclick, onmousedown, onmouseup} = {}) => {
-const { link, id, selected } = opts
+const { link, id, selected, layout, selectedLayout } = opts
  return link.Image ? html`<div 
   class="bg-light-gray" 
   onclick="${onclick}"
   onmousedown="${onmousedown}"
   onmouseup="${onmouseup}"
   id="${id}"
-  style="${getStyle(opts)}">
+  style="${getStyle(opts, selected == true ? selectedLayout: layout)}">
  ${content(opts)}
 </div>` : ''
 }
@@ -7887,12 +8029,13 @@ function view (state, emit) {
   if (state.title !== TITLE) emit(state.events.DOMTITLECHANGE, TITLE)
 
   return html`
-    <body class="code lh-copy w-100 h-100">
+    <body class="lh-copy w-100 h-100" style="font-family: 'Space Mono', monospace;">
       <main class="pa0 cf center w-100 h-100" style="pointer-events:${state.isDragging?'none':'all'}" >
         <div class="bg-red w-100 h-100 absolute" style="background:linear-gradient(${state.colors.join(',')});transition:background-color 1s;" onclick=${(e) => emit('clear selection')} ></div>
+        ${pageSelector(state, emit)}
         ${tagSelector(state, emit)}
       
-        ${state.currentResults.map((l, i) => floatingImage(l, {
+        ${state.filteredLinks.visible.map((l, i) => floatingImage(l, {
           onclick: (e) => {emit('image:click', i, e)},
           onmousedown: (e) => {emit('image:mousedown', i, e)},
           onmouseup: (e) => {emit('image:mouseup', i, e)},
@@ -7914,12 +8057,26 @@ function parseMarkdown(markdownText) {
 		.replace(/\[(.*?)\]\((.*?)\)/gim, "<a href='$2'>$1</a>")
 	//	.replace(/\n$/gim, '<br />')
 
-	const span =  html`<span class="f7"></span>`
+	const span =  html`<span class="f6"></span>`
   span.innerHTML = htmlText.trim()
   return span
 }
-},{"./tagSelector.js":148,"choo/html":33}],148:[function(require,module,exports){
+},{"./pageSelector.js":151,"./tagSelector.js":152,"choo/html":33}],151:[function(require,module,exports){
+const html = require('choo/html')
+
+module.exports = (state, emit) =>  {
+  const l = state.filteredLinks
+  const style = (i) => i === l.currPage ? "" : "dim pointer underline"
+  return  html`<div class="h2 f7 justify-end relative flex">
+    <div></div>
+    ${l.totalPages > 1? new Array(l.totalPages).fill(0).map((_, i) => html`
+        <div class="pa2 ${style(i)}" onclick=${() => emit('set page', i)}>${i}</div>
+    `) : ''}
+</div>
+`}
+},{"choo/html":33}],152:[function(require,module,exports){
 var html = require('choo/html')
+const title = require('./title.js')
 
 
 // const listTags = (links) => {
@@ -7934,12 +8091,30 @@ var html = require('choo/html')
     return `background-color:black;color:${tag.color};text-decoration:underline`
   }
 
+
   module.exports = (state, emit) => {
-      return html`<div class="flex flex-wrap relative">
-      ${state.tags.map((tag, i) => html`<div class="f7 pa1 ph1 ma0 pointer dim" style=${style(tag)} onclick=${() => emit('toggle tag', i)}>${tag.label}</div>`)}
+      
+      return html`
+    <div class="flex relative items-start pa4 pt2">
+    <div class="f6">
+    ${title(state, emit)}
+    </div>
+    <div class="flex flex-wrap relative pa1">
+      ${state.tags.map((tag, i) => html`<div class="f6 pa1 ph1 ma0 pointer dim" style=${style(tag)} onclick=${() => emit('toggle tag', i)}>${tag.label}</div>`)}
+    </div>
      </div>`
   }
-},{"choo/html":33}],149:[function(require,module,exports){
+},{"./title.js":153,"choo/html":33}],153:[function(require,module,exports){
+var html = require('choo/html')
+
+module.exports = (state, emit) =>  html`
+<div class="f1 pa1 f-headline lh-solid""> hydra internet garden</div>
+<div class="">ever-growing community database of resources, projects, tutorials, and code related to
+<a target="_blank" href="https://hydra.ojack.xyz">hydra video synth</a></div>
+
+<a class="dim mt3 pa1 ph3 black pointer ba bw1 ttu dib" href="https://airtable.com/shr46DG8SYMPL7u9s" target="_blank">add a link</a>
+`
+},{"choo/html":33}],154:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -8449,7 +8624,7 @@ var objectKeys = Object.keys || function (obj) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"object-assign":158,"util/":152}],150:[function(require,module,exports){
+},{"object-assign":163,"util/":157}],155:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -8474,14 +8649,14 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],151:[function(require,module,exports){
+},{}],156:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],152:[function(require,module,exports){
+},{}],157:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -9071,7 +9246,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":151,"_process":160,"inherits":150}],153:[function(require,module,exports){
+},{"./support/isBuffer":156,"_process":165,"inherits":155}],158:[function(require,module,exports){
 'use strict'
 
 exports.byteLength = byteLength
@@ -9225,9 +9400,9 @@ function fromByteArray (uint8) {
   return parts.join('')
 }
 
-},{}],154:[function(require,module,exports){
+},{}],159:[function(require,module,exports){
 
-},{}],155:[function(require,module,exports){
+},{}],160:[function(require,module,exports){
 (function (Buffer){
 /*!
  * The buffer module from node.js, for the browser.
@@ -11008,7 +11183,7 @@ function numberIsNaN (obj) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"base64-js":153,"buffer":155,"ieee754":157}],156:[function(require,module,exports){
+},{"base64-js":158,"buffer":160,"ieee754":162}],161:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -11533,7 +11708,7 @@ function functionBindPolyfill(context) {
   };
 }
 
-},{}],157:[function(require,module,exports){
+},{}],162:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = (nBytes * 8) - mLen - 1
@@ -11619,7 +11794,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],158:[function(require,module,exports){
+},{}],163:[function(require,module,exports){
 /*
 object-assign
 (c) Sindre Sorhus
@@ -11711,7 +11886,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	return to;
 };
 
-},{}],159:[function(require,module,exports){
+},{}],164:[function(require,module,exports){
 (function (process){
 // .dirname, .basename, and .extname methods are extracted from Node.js v8.11.1,
 // backported and transplited with Babel, with backwards-compat fixes
@@ -12017,7 +12192,7 @@ var substr = 'ab'.substr(-1) === 'b'
 ;
 
 }).call(this,require('_process'))
-},{"_process":160}],160:[function(require,module,exports){
+},{"_process":165}],165:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -12203,7 +12378,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],161:[function(require,module,exports){
+},{}],166:[function(require,module,exports){
 (function (global){
 /*! https://mths.be/punycode v1.4.1 by @mathias */
 ;(function(root) {
@@ -12740,7 +12915,7 @@ process.umask = function() { return 0; };
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],162:[function(require,module,exports){
+},{}],167:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12826,7 +13001,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],163:[function(require,module,exports){
+},{}],168:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12913,13 +13088,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],164:[function(require,module,exports){
+},{}],169:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":162,"./encode":163}],165:[function(require,module,exports){
+},{"./decode":167,"./encode":168}],170:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13653,7 +13828,7 @@ Url.prototype.parseHost = function() {
   if (host) this.hostname = host;
 };
 
-},{"./util":166,"punycode":161,"querystring":164}],166:[function(require,module,exports){
+},{"./util":171,"punycode":166,"querystring":169}],171:[function(require,module,exports){
 'use strict';
 
 module.exports = {
