@@ -1,5 +1,6 @@
 var html = require('choo/html')
-const tagSelector = require('./tagSelector.js')
+// const tagSelector = require('./tagSelector.js')
+const tagSelector = require('./__tagSelectorCategories.js')
 var TITLE = 'hydra internet garden'
 
 module.exports = view
