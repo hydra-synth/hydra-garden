@@ -1,6 +1,9 @@
 var html = require('choo/html')
+const raw = require('choo/html/raw')
 const tagSelector = require('./tagSelector.js')
 const pageSelector = require('./pageSelector.js')
+
+const md = require('markdown-it')({ linkify: true, breaks: true })
 
 // const tagSelector = require('./tagSelectorCategories.js')
 var TITLE = 'garden-frontend - main'
@@ -34,8 +37,8 @@ const content = ({ selected, link}) => selected ? html`
   <a class="" href="${link.Link}" target="_blank">
   <img style="" src="${link.Image[0].thumbnails.large.url}"/>
   </a>
-  <div class="f6">${link['Short Description']}</div>
-  <div class="f6">${link['Description']}</div>
+  <div class="f6">${raw(md.render(link['Short Description'] !== undefined ? link['Short Description'] : ""))}</div>
+  <div class="f6">${raw(md.render(link['Description'] !== undefined ? link['Description'] : ""))}</div>
   <div>${tagEl(link.Tags)}</div>
 </div>
 ` : html`<img style="" src="${link.Image[0].thumbnails.large.url}"/>
