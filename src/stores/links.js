@@ -1,8 +1,13 @@
 const { rand } = require('./../lib/util.js')
 
 const Airtable = require('airtable')
+Airtable.configure({
+  endpointUrl: 'https://api.airtable.com',
+  apiKey: 'pateIuSbF1loZff0A.c294094b7c92945f18221d417669da78f3718514ec4f8ae98c42e2bc81f624ba'
+});
+
 // read-only API key from rhizomaticode
-const base = new Airtable({ apiKey: 'keyRHmFMa5W4S4TUJ' }).base('app1AzaEIEVOFm3nN')
+const base = Airtable.base('app1AzaEIEVOFm3nN');
 module.exports = store
 
 function store(state, emitter) {

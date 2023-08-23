@@ -16,6 +16,8 @@
     "markdown-it": "^13.0.1"
   },
   "devDependencies": {
+    "browserify": "^17.0.0",
+    "budo": "^11.8.4",
     "choo-devtools": "^3.0.4",
     "parcel": "^2.0.1",
     "standard": "^16.0.4"
